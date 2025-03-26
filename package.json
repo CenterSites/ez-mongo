@@ -12,19 +12,24 @@
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
-    "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+    "parse:xml": "cross-env NODE_OPTIONS=--no-deprecation tsx src/xml-parser/cli.ts"
   },
   "dependencies": {
     "@payloadcms/db-mongodb": "latest",
     "@payloadcms/next": "latest",
     "@payloadcms/payload-cloud": "latest",
     "@payloadcms/richtext-lexical": "latest",
+    "commander": "^13.1.0",
     "cross-env": "^7.0.3",
+    "dotenv": "^16.4.7",
     "graphql": "^16.8.1",
     "next": "15.2.3",
     "payload": "latest",
     "react": "19.0.0",
     "react-dom": "19.0.0",
+    "sax": "^1.4.1",
+    "sax-wasm": "^3.0.5",
     "sharp": "0.32.6"
   },
   "devDependencies": {
@@ -32,9 +37,11 @@
     "@types/node": "^22.5.4",
     "@types/react": "19.0.12",
     "@types/react-dom": "19.0.4",
+    "@types/sax": "^1.2.7",
     "eslint": "^9.16.0",
     "eslint-config-next": "15.2.3",
     "prettier": "^3.4.2",
+    "tsx": "^4.19.3",
     "typescript": "5.7.3"
   },
   "engines": {
