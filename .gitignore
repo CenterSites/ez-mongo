@@ -41,3 +41,11 @@ next-env.d.ts
 .env
 
 /media
+
+# Grote databestanden
+/data/export.xml
+/data/export_small.xml
+/src/xml-parser/data/export.xml
+# Houd kleinere voorbeeldbestanden wel bij
+#/data/export_smaller.xml
+#/data/export_smallest.xml
