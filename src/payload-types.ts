@@ -6,23 +6,97 @@
  * and re-run `payload generate:types` to regenerate this file.
  */
 
+/**
+ * Supported timezones in IANA format.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "supportedTimezones".
+ */
+export type SupportedTimezones =
+  | 'Pacific/Midway'
+  | 'Pacific/Niue'
+  | 'Pacific/Honolulu'
+  | 'Pacific/Rarotonga'
+  | 'America/Anchorage'
+  | 'Pacific/Gambier'
+  | 'America/Los_Angeles'
+  | 'America/Tijuana'
+  | 'America/Denver'
+  | 'America/Phoenix'
+  | 'America/Chicago'
+  | 'America/Guatemala'
+  | 'America/New_York'
+  | 'America/Bogota'
+  | 'America/Caracas'
+  | 'America/Santiago'
+  | 'America/Buenos_Aires'
+  | 'America/Sao_Paulo'
+  | 'Atlantic/South_Georgia'
+  | 'Atlantic/Azores'
+  | 'Atlantic/Cape_Verde'
+  | 'Europe/London'
+  | 'Europe/Berlin'
+  | 'Africa/Lagos'
+  | 'Europe/Athens'
+  | 'Africa/Cairo'
+  | 'Europe/Moscow'
+  | 'Asia/Riyadh'
+  | 'Asia/Dubai'
+  | 'Asia/Baku'
+  | 'Asia/Karachi'
+  | 'Asia/Tashkent'
+  | 'Asia/Calcutta'
+  | 'Asia/Dhaka'
+  | 'Asia/Almaty'
+  | 'Asia/Jakarta'
+  | 'Asia/Bangkok'
+  | 'Asia/Shanghai'
+  | 'Asia/Singapore'
+  | 'Asia/Tokyo'
+  | 'Asia/Seoul'
+  | 'Australia/Brisbane'
+  | 'Australia/Sydney'
+  | 'Pacific/Guam'
+  | 'Pacific/Noumea'
+  | 'Pacific/Auckland'
+  | 'Pacific/Fiji';
+
 export interface Config {
   auth: {
     users: UserAuthOperations;
   };
+  blocks: {};
   collections: {
     users: User;
     media: Media;
+    ez_articleGroups: EzArticleGroup;
+    ez_articles: EzArticle;
+    'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
+  };
+  collectionsJoins: {};
+  collectionsSelect: {
+    users: UsersSelect<false> | UsersSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
+    ez_articleGroups: EzArticleGroupsSelect<false> | EzArticleGroupsSelect<true>;
+    ez_articles: EzArticlesSelect<false> | EzArticlesSelect<true>;
+    'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
+    'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
+    'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
     defaultIDType: string;
   };
   globals: {};
+  globalsSelect: {};
   locale: null;
   user: User & {
     collection: 'users';
+  };
+  jobs: {
+    tasks: unknown;
+    workflows: unknown;
   };
 }
 export interface UserAuthOperations {
@@ -81,6 +155,122 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ez_articleGroups".
+ */
+export interface EzArticleGroup {
+  id: string;
+  name: string;
+  /**
+   * ID uit het externe systeem, wordt gebruikt voor import mapping
+   */
+  externalId?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ez_articles".
+ */
+export interface EzArticle {
+  id: string;
+  sku: string;
+  typeNumber?: string | null;
+  description?: string | null;
+  /**
+   * De artikelgroep waar dit artikel toe behoort
+   */
+  group?: (string | null) | EzArticleGroup;
+  /**
+   * Classificaties waar dit artikel toe behoort
+   */
+  classifications?:
+    | {
+        /**
+         * Classificatie ID of naam
+         */
+        classification?: string | null;
+        /**
+         * ID van de classificatie in het externe systeem
+         */
+        externalId?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Specificaties en eigenschappen van het artikel
+   */
+  specifications?:
+    | {
+        name: string;
+        value?: string | null;
+        unit?: string | null;
+        propertyType?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Afbeeldingen en documenten bij het artikel
+   */
+  assets?:
+    | {
+        type: 'image' | 'document' | 'other';
+        /**
+         * De URL naar de afbeelding of het document
+         */
+        url?: string | null;
+        /**
+         * Combinatie van OriginalFile en OriginalExtension, bijv. "10460.jpg"
+         */
+        originalFile?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Artikelen die gerelateerd zijn aan dit artikel
+   */
+  relatedArticles?:
+    | {
+        article?: (string | null) | EzArticle;
+        relationType?: ('component' | 'accessory' | 'alternative' | 'other') | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-locked-documents".
+ */
+export interface PayloadLockedDocument {
+  id: string;
+  document?:
+    | ({
+        relationTo: 'users';
+        value: string | User;
+      } | null)
+    | ({
+        relationTo: 'media';
+        value: string | Media;
+      } | null)
+    | ({
+        relationTo: 'ez_articleGroups';
+        value: string | EzArticleGroup;
+      } | null)
+    | ({
+        relationTo: 'ez_articles';
+        value: string | EzArticle;
+      } | null);
+  globalSlug?: string | null;
+  user: {
+    relationTo: 'users';
+    value: string | User;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
@@ -112,6 +302,124 @@ export interface PayloadMigration {
   batch?: number | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users_select".
+ */
+export interface UsersSelect<T extends boolean = true> {
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media_select".
+ */
+export interface MediaSelect<T extends boolean = true> {
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ez_articleGroups_select".
+ */
+export interface EzArticleGroupsSelect<T extends boolean = true> {
+  name?: T;
+  externalId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ez_articles_select".
+ */
+export interface EzArticlesSelect<T extends boolean = true> {
+  sku?: T;
+  typeNumber?: T;
+  description?: T;
+  group?: T;
+  classifications?:
+    | T
+    | {
+        classification?: T;
+        externalId?: T;
+        id?: T;
+      };
+  specifications?:
+    | T
+    | {
+        name?: T;
+        value?: T;
+        unit?: T;
+        propertyType?: T;
+        id?: T;
+      };
+  assets?:
+    | T
+    | {
+        type?: T;
+        url?: T;
+        originalFile?: T;
+        id?: T;
+      };
+  relatedArticles?:
+    | T
+    | {
+        article?: T;
+        relationType?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-locked-documents_select".
+ */
+export interface PayloadLockedDocumentsSelect<T extends boolean = true> {
+  document?: T;
+  globalSlug?: T;
+  user?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-preferences_select".
+ */
+export interface PayloadPreferencesSelect<T extends boolean = true> {
+  user?: T;
+  key?: T;
+  value?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-migrations_select".
+ */
+export interface PayloadMigrationsSelect<T extends boolean = true> {
+  name?: T;
+  batch?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
